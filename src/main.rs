@@ -63,7 +63,7 @@ impl CG_Data {
 impl CG_Function for CG_Data {
     fn forward(&self) -> f64 { // since forward method calls from its child recursivelly,
         match self.parVOpt {
-            Some(ref parent) => parent.borrow_mut().forward(),
+            Some(ref parent) => (**parent).borrow_mut().forward(),
             None => self.data,
         }
     }
