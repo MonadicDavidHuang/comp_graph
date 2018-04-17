@@ -138,4 +138,12 @@ fn main() {
     println!("{:?}", c);
     println!("{:?}", d);
     println!("{:?}", c.dim().0);
+
+    let shape = (2 as usize, 3 as usize);
+    let tmp = Array2::<f32>::zeros(shape);
+
+    let from = tmp.shape();
+    let shape2 = (from[0], from[1]);
+    let tmp2 = Array2::<f32>::zeros(shape2);
+    print!("{:?}", tmp2);
 }

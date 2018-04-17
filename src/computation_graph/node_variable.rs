@@ -1,17 +1,14 @@
 extern crate ndarray;
 extern crate ndarray_linalg;
 
-mod node_function;
-
 use std::rc::Rc;
 use std::cell::RefCell;
 
-mod node_function;
-
-use node_function::*;
-
 use ndarray::*;
 use ndarray_linalg::*;
+
+mod node_function;
+use node_function::*;
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 struct cg_variable {

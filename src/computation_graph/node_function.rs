@@ -1,15 +1,14 @@
 extern crate ndarray;
 extern crate ndarray_linalg;
 
-mod node_variable;
-
-use node_variable::*;
-
 use std::rc::Rc;
 use std::cell::RefCell;
 
 use ndarray::*;
 use ndarray_linalg::*;
+
+mod node_variable;
+use node_variable::*;
 
 // ++++++++++++++++++++++++ trait ++++++++++++++++++++++++ //
 trait cg_function {
@@ -24,29 +23,29 @@ trait cg_function {
 
 // ++++++++++++++++++++++++ cg_data ++++++++++++++++++++++++ //
 struct cg_data {
+    shape: (usize, usize),
     data: Array2::<f32>,
     grad: Array2::<f32>,
     par_v_opt: Option<Rc<RefCell<cg_variable>>>,
 }
 
 impl cg_data {
-    fn new(data: Array2::<f32>,
+    fn new(shape: (usize, usize),
+           data: Array2::<f32>,
            par_v_opt: Option<Rc<RefCell<cg_variable>>>)
            -> Rc<RefCell<cg_data>> {
         let obj_data = cg_data {data: data,
-                                grad: Array2::<f32>::zeros((114, 514)),
+                                grad: Array2::<f32>::zeros(shape),
                                 par_v_opt: par_v_opt};
         let ref_data = Rc::new(RefCell::new(obj_data));
         ref_data
     }
 }
 
-;
-
 impl cg_function for cg_data {
     fn forward(&self) -> Array2::<f32> { // since forward method calls from its child recursivelly,
         match self.par_v_opt {
-            Some(ref par_v) => (**par_v).borrow_mut().forward(),
+            Some(ref par_v) => (**par_v).borrow_mut().forward(), // ** wont be needed due to implemention of deref
             None => self.data,
         }
     }
