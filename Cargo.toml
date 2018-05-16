@@ -4,5 +4,8 @@ version = "0.1.0"
 authors = ["MonadicDavidHuang <mynameistoyoko@gmail.com>"]
 
 [dependencies]
+rand = "0.4"
 ndarray = "0.11.0"
-ndarray-linalg = { version = "0.9.0", features = ["openblas"] }
+ndarray-rand = "0.7.0"
+ndarray-linalg = "0.9"
+openblas-src = "0.5" # or another backend of your choice

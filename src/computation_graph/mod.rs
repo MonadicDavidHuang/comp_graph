@@ -1,2 +1,0 @@
-mod variable
-mod function
