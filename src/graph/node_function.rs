@@ -67,8 +67,8 @@ impl CgFunction for CgPlus {
 }
 // ++++++++++++++++++++++++ /CgPlus ++++++++++++++++++++++++ //
 
-// ++++++++++++++++++++++++ CgDot ++++++++++++++++++++++++ //
-pub struct CgDot {
+// ++++++++++++++++++++++++ CgMSE ++++++++++++++++++++++++ //
+pub struct CgMSE {
     dom_shape: (usize, usize),
     cod_shape: (usize, usize),
     par_v_left: Arc<RwLock<CgVariable>>,
@@ -76,14 +76,14 @@ pub struct CgDot {
     chi_v_opt: Option<Weak<RwLock<CgVariable>>>,
 }
 
-impl CgDot {
+impl CgMSE {
     pub fn new(par_v_left: Arc<RwLock<CgVariable>>,
-               par_v_right: Arc<RwLock<CgVariable>>) -> Arc<RwLock<CgPlus>> {
+               par_v_right: Arc<RwLock<CgVariable>>) -> Arc<RwLock<CgMSE>> {
         let shape_left = (*(*par_v_left).read().unwrap()).get_shape();
         let shape_right = (*(*par_v_right).read().unwrap()).get_shape();
         assert_eq!(shape_left, shape_right);
 
-        let obj_data = CgPlus { dom_shape: shape_left,
+        let obj_data = CgMSE { dom_shape: shape_left,
                                 cod_shape: shape_left, // `+` returns same shape
                                 par_v_left: par_v_left,
                                 par_v_right: par_v_right,
@@ -94,7 +94,7 @@ impl CgDot {
     }
 }
 
-impl CgFunction for CgDot {
+impl CgFunction for CgMSE {
     fn forward(&self) -> Array2::<f32> {
         let mut guard_left = (*self.par_v_left).write().unwrap();
         let mut guard_right = (*self.par_v_right).write().unwrap();
