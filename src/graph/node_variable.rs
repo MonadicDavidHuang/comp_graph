@@ -12,6 +12,7 @@ use graph::associator::*;
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 pub struct CgVariable {
+    role: String,
     shape: (usize, usize),
     data: Array2::<f32>,
     grad: Array2::<f32>,
@@ -23,25 +24,31 @@ impl CgVariable {
     pub fn new_base(data: Array2::<f32>) -> Arc<RwLock<CgVariable>> {
         let shape: (usize, usize) = slice2tuple(data.shape());
 
-        let mut variable_obj = CgVariable { shape: shape,
-                                            data: Array2::<f32>::ones(shape),
-                                            grad: Array2::<f32>::zeros(shape),
-                                            par_f_opt: None,
-                                            did: true };
+        let mut variable_obj = CgVariable {
+            role: "mono".to_string(),
+            shape: shape,
+            data: Array2::<f32>::ones(shape),
+            grad: Array2::<f32>::zeros(shape),
+            par_f_opt: None,
+            did: true
+        };
 
         variable_obj.set_data(data);
         let variable_ref = Arc::new(RwLock::new(variable_obj));
         variable_ref
     }
 
-    pub fn new(parent: Arc<RwLock<CgFunction>>) -> Arc<RwLock<CgVariable>> {
+    pub fn new(parent: Arc<RwLock<CgFunction>>, role: String) -> Arc<RwLock<CgVariable>> {
         let cod_shape: (usize, usize) = (*(*parent).read().unwrap()).get_cod_shape();
 
-        let variable_obj = CgVariable { shape: cod_shape,
-                                        data: Array2::<f32>::ones(cod_shape),
-                                        grad: Array2::<f32>::zeros(cod_shape),
-                                        par_f_opt: Some(parent.clone()),
-                                        did: false };
+        let variable_obj = CgVariable {
+            role: role,
+            shape: cod_shape,
+            data: Array2::<f32>::ones(cod_shape),
+            grad: Array2::<f32>::zeros(cod_shape),
+            par_f_opt: Some(parent.clone()),
+            did: false
+        };
 
         let variable_ref = Arc::new(RwLock::new(variable_obj));
         (*(*parent).write().unwrap()).set_child(variable_ref.clone());

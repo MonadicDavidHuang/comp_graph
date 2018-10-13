@@ -34,11 +34,13 @@ impl CgPlus {
         let shape_right = (*(*par_v_right).read().unwrap()).get_shape();
         assert_eq!(shape_left, shape_right);
 
-        let obj_data = CgPlus { dom_shape: shape_left,
-                                cod_shape: shape_left, // `+` returns same shape
-                                par_v_left: par_v_left,
-                                par_v_right: par_v_right,
-                                chi_v_opt: None };
+        let obj_data = CgPlus {
+            dom_shape: shape_left,
+            cod_shape: shape_left, // `+` returns same shape
+            par_v_left: par_v_left,
+            par_v_right: par_v_right,
+            chi_v_opt: None
+        };
 
         let ref_data = Arc::new(RwLock::new(obj_data));
         ref_data
@@ -83,11 +85,13 @@ impl CgMSE {
         let shape_right = (*(*par_v_right).read().unwrap()).get_shape();
         assert_eq!(shape_left, shape_right);
 
-        let obj_data = CgMSE { dom_shape: shape_left,
-                                cod_shape: shape_left, // `+` returns same shape
-                                par_v_left: par_v_left,
-                                par_v_right: par_v_right,
-                                chi_v_opt: None };
+        let obj_data = CgMSE {
+            dom_shape: shape_left,
+           cod_shape: shape_left, // `+` returns same shape
+           par_v_left: par_v_left,
+           par_v_right: par_v_right,
+           chi_v_opt: None
+       };
 
         let ref_data = Arc::new(RwLock::new(obj_data));
         ref_data

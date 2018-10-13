@@ -17,6 +17,10 @@ use ndarray_linalg::*;
 use std::time::{Duration, Instant};
 use std::sync::{Arc, Weak, RwLock};
 
+extern crate rayon;
+use rayon::prelude::*;
+
+
 fn fuck() -> Arc<RwLock<CgVariable>> {
     let shape1 = (5 as usize, 2 as usize);
     let arr1 = Array2::<f32>::ones(shape1);
@@ -27,7 +31,7 @@ fn fuck() -> Arc<RwLock<CgVariable>> {
     let var2 = CgVariable::new_base(arr2);
 
     let fun3 = CgPlus::new(var1, var2);
-    let var3 = CgVariable::new(fun3);
+    let var3 = CgVariable::new(fun3, "mono".to_string());
     var3
 }
 
@@ -39,6 +43,15 @@ fn main() {
     // let result = (*guard).forward().to_owned();
 
     println!("{:?}", result);
+
+    let mut v: Vec<Arc<RwLock<CgVariable>>> = vec!{ fuck(), fuck(), fuck() };
+    let (a, b, c) = (v.remove(0), v.remove(0), v.remove(0));
+
+    (*(*a).write().unwrap()).forward().to_owned();
+
+    // println!("{:?}, {:?}, {:?}", a, b, c);
+    // println!("{:?}", v);
+
 
     /*
     let shape1 = (5 as usize, 5 as usize);
