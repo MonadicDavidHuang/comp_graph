@@ -49,7 +49,6 @@ fn main() {
     // println!("{:?}, {:?}, {:?}", a, b, c);
     // println!("{:?}", v);
 
-
     /*
     let shape1 = (5 as usize, 5 as usize);
     let tmp1 = Array2::<f32>::ones(shape1);
