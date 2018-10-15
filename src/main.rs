@@ -17,9 +17,6 @@ use ndarray_linalg::*;
 use std::time::{Duration, Instant};
 use std::sync::{Arc, Weak, RwLock};
 
-extern crate rayon;
-use rayon::prelude::*;
-
 
 fn fuck() -> Arc<RwLock<CgVariable>> {
     let shape1 = (5 as usize, 2 as usize);
