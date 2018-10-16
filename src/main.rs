@@ -1,4 +1,4 @@
-extern crate comp_graph;
+extern crate computation_graph;
 
 // extern crate rand;
 extern crate ndarray;
@@ -6,8 +6,8 @@ extern crate ndarray;
 extern crate ndarray_linalg;
 extern crate openblas_src; // or another backend of your choice
 
-use comp_graph::graph::node_function::*;
-use comp_graph::graph::node_variable::*;
+use computation_graph::graph::node_function::*;
+use computation_graph::graph::node_variable::*;
 
 // use rand::distributions::*;
 use ndarray::*;
