@@ -11,7 +11,7 @@ use graph::node_variable::*;
 use graph::associator::*;
 
 pub trait CgFunction {
-    fn forward(&self) -> Array2::<f32>;
+    fn forward(&self) -> Array2<f32>;
     // fn backward(&self) -> ();
     fn set_child(&mut self, chi_v: Arc<RwLock<CgVariable>>) -> ();
     fn get_dom_shape(&self) -> (usize, usize);
@@ -39,7 +39,7 @@ impl CgPlus {
             cod_shape: shape_left, // `+` returns same shape
             par_v_left: par_v_left,
             par_v_right: par_v_right,
-            chi_v_opt: None
+            chi_v_opt: None,
         };
 
         let ref_data = Arc::new(RwLock::new(obj_data));
@@ -48,7 +48,7 @@ impl CgPlus {
 }
 
 impl CgFunction for CgPlus {
-    fn forward(&self) -> Array2::<f32> {
+    fn forward(&self) -> Array2<f32> {
         let mut guard_left = (*self.par_v_left).write().unwrap();
         let mut guard_right = (*self.par_v_right).write().unwrap();
         let dom_left_ref = (*guard_left).forward();
@@ -64,8 +64,8 @@ impl CgFunction for CgPlus {
         self.chi_v_opt = Some(weak_chi_v);
     }
 
-    fn get_dom_shape(&self) -> (usize, usize) {self.dom_shape}
-    fn get_cod_shape(&self) -> (usize, usize) {self.cod_shape}
+    fn get_dom_shape(&self) -> (usize, usize) { self.dom_shape }
+    fn get_cod_shape(&self) -> (usize, usize) { self.cod_shape }
 }
 // ++++++++++++++++++++++++ /CgPlus ++++++++++++++++++++++++ //
 
@@ -87,11 +87,11 @@ impl CgMSE {
 
         let obj_data = CgMSE {
             dom_shape: shape_left,
-           cod_shape: shape_left, // `+` returns same shape
-           par_v_left: par_v_left,
-           par_v_right: par_v_right,
-           chi_v_opt: None
-       };
+            cod_shape: shape_left, // `+` returns same shape
+            par_v_left: par_v_left,
+            par_v_right: par_v_right,
+            chi_v_opt: None,
+        };
 
         let ref_data = Arc::new(RwLock::new(obj_data));
         ref_data
@@ -99,7 +99,7 @@ impl CgMSE {
 }
 
 impl CgFunction for CgMSE {
-    fn forward(&self) -> Array2::<f32> {
+    fn forward(&self) -> Array2<f32> {
         let mut guard_left = (*self.par_v_left).write().unwrap();
         let mut guard_right = (*self.par_v_right).write().unwrap();
         let dom_left_ref = (*guard_left).forward();
@@ -115,7 +115,7 @@ impl CgFunction for CgMSE {
         self.chi_v_opt = Some(weak_chi_v);
     }
 
-    fn get_dom_shape(&self) -> (usize, usize) {self.dom_shape}
-    fn get_cod_shape(&self) -> (usize, usize) {self.cod_shape}
+    fn get_dom_shape(&self) -> (usize, usize) { self.dom_shape }
+    fn get_cod_shape(&self) -> (usize, usize) { self.cod_shape }
 }
 // ++++++++++++++++++++++++ /CgDot ++++++++++++++++++++++++ //

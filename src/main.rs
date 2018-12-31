@@ -41,7 +41,7 @@ fn main() {
 
     println!("{:?}", result);
 
-    let mut v: Vec<Arc<RwLock<CgVariable>>> = vec!{ fuck(), fuck(), fuck() };
+    let mut v: Vec<Arc<RwLock<CgVariable>>> = vec! {fuck(), fuck(), fuck()};
     let (a, b, c) = (v.remove(0), v.remove(0), v.remove(0));
 
     (*(*a).write().unwrap()).forward().to_owned();
