@@ -4,7 +4,7 @@ extern crate computation_graph;
 extern crate ndarray;
 // extern crate ndarray_rand;
 extern crate ndarray_linalg;
-extern crate openblas_src; // or another backend of your choice
+// extern crate openblas_src; // or another backend of your choice
 
 use computation_graph::graph::node_function::*;
 use computation_graph::graph::node_variable::*;
@@ -22,6 +22,7 @@ fn fuck() -> Arc<RwLock<CgVariable>> {
     let shape1 = (5 as usize, 2 as usize);
     let arr1 = Array2::<f32>::ones(shape1);
     let var1 = CgVariable::new_base(arr1);
+
 
     let shape2 = (5 as usize, 2 as usize);
     let arr2 = Array2::<f32>::ones(shape2);

@@ -1,6 +1,6 @@
 extern crate ndarray;
 extern crate ndarray_linalg;
-extern crate openblas_src; // or another backend of your choice
+// extern crate openblas_src; // or another backend of your choice
 
 use self::ndarray::*;
 use self::ndarray_linalg::*;

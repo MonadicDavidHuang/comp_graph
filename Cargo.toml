@@ -5,7 +5,7 @@ authors = ["MonadicDavidHuang <mynameistoyoko@gmail.com>"]
 
 [dependencies]
 rand = "0.4"
-ndarray = "0.11.0"
+ndarray = "0.12.0"
 ndarray-rand = "0.7.0"
-ndarray-linalg = "0.9"
-openblas-src = "0.5" # or another backend of your choice
+ndarray-linalg = "0.10"
+# openblas-src = "0.5" # or another backend of your choice
