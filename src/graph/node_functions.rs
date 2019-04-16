@@ -54,7 +54,7 @@ impl CgFunction for CgPlus {
         codomain_data
     }
 
-    // fn backward(&self) -> () {}
+    // fn backward(&self) {}
 
     fn set_child(&mut self, child_variable_reference: Arc<RwLock<CgVariable>>) {
         let child_variable_reference_weak =
@@ -112,7 +112,7 @@ impl CgFunction for CgMse {
         codomain_data
     }
 
-    // fn backward(&self) -> () {}
+    // fn backward(&self) {}
 
     fn set_child(&mut self, child_variable_reference: Arc<RwLock<CgVariable>>) {
         let child_variable_reference_weak =
