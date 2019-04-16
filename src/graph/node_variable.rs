@@ -1,14 +1,17 @@
 extern crate ndarray;
 extern crate ndarray_linalg;
-// extern crate openblas_src; // or another backend of your choice
+
+use std::sync::{Arc, RwLock, Weak};
+
+use graph::node_function::CgFunction;
+use graph::node_functions::*;
 
 use self::ndarray::*;
 use self::ndarray_linalg::*;
 
-use std::sync::{Arc, Weak, RwLock};
-
-use graph::node_function::*;
-use graph::associator::*;
+pub fn slice2pair(slice: &[usize]) -> (usize, usize) {
+    (slice[0], slice[1])
+}
 
 // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 pub struct CgVariable {
@@ -22,7 +25,7 @@ pub struct CgVariable {
 
 impl CgVariable {
     pub fn new_base(data: Array2<f32>) -> Arc<RwLock<CgVariable>> {
-        let shape: (usize, usize) = slice2tuple(data.shape());
+        let shape: (usize, usize) = slice2pair(data.shape());
 
         let mut variable_obj = CgVariable {
             role: "mono".to_string(),
@@ -39,7 +42,7 @@ impl CgVariable {
     }
 
     pub fn new(parent: Arc<RwLock<CgFunction>>, role: String) -> Arc<RwLock<CgVariable>> {
-        let cod_shape: (usize, usize) = (*(*parent).read().unwrap()).get_cod_shape();
+        let cod_shape: (usize, usize) = (*(*parent).read().unwrap()).get_codomain_shape();
 
         let variable_obj = CgVariable {
             role: role,
@@ -73,13 +76,13 @@ impl CgVariable {
     pub fn see_child(&self) -> &(Array2<f32> ) { &(self.data) }
 
     pub fn set_data(&mut self, data: Array2<f32>) -> () {
-        let shape: (usize, usize) = slice2tuple(data.shape());
+        let shape: (usize, usize) = slice2pair(data.shape());
         assert_eq!(self.shape, shape);
         self.data = data;
     }
 
     pub fn set_grad(&mut self, grad: Array2<f32>) -> () {
-        assert_eq!(self.shape, slice2tuple(grad.shape()));
+        assert_eq!(self.shape, slice2pair(grad.shape()));
         self.grad = grad;
     }
 
