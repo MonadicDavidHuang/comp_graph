@@ -11,16 +11,17 @@ mod basic_tests {
 
     use computation_graph::graph::node_functions::*;
     use computation_graph::graph::node_variable::*;
+    use computation_graph::graph::node_functions::cg_plus::CgPlus;
 
     fn make_plus(shape: (usize, usize)) -> Arc<RwLock<CgVariable>> {
         let array1 = Array2::<f32>::ones(shape);
-        let variable1 = CgVariable::new_base(array1);
+        let variable1 = CgVariable::from_array(array1);
 
         let array2 = Array2::<f32>::ones(shape);
-        let variable2 = CgVariable::new_base(array2);
+        let variable2 = CgVariable::from_array(array2);
 
-        let function3 = CgPlus::new(variable1, variable2);
-        let variable3 = CgVariable::new(function3, "mono".to_string());
+        let function3 = CgPlus::from_ref(variable1, variable2);
+        let variable3 = CgVariable::from_ref(function3, "mono".to_string());
         variable3
     }
 

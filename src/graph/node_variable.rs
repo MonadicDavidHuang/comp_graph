@@ -13,7 +13,6 @@ pub fn slice2pair(slice: &[usize]) -> (usize, usize) {
     (slice[0], slice[1])
 }
 
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
 pub struct CgVariable {
     role: String,
     shape: (usize, usize),
@@ -24,7 +23,7 @@ pub struct CgVariable {
 }
 
 impl CgVariable {
-    pub fn new_base(data: Array2<f32>) -> Arc<RwLock<CgVariable>> {
+    pub fn from_array(data: Array2<f32>) -> Arc<RwLock<CgVariable>> {
         let shape: (usize, usize) = slice2pair(data.shape());
 
         let mut variable_obj = CgVariable {
@@ -41,7 +40,7 @@ impl CgVariable {
         variable_ref
     }
 
-    pub fn new(parent: Arc<RwLock<CgFunction>>, role: String) -> Arc<RwLock<CgVariable>> {
+    pub fn from_ref(parent: Arc<RwLock<CgFunction>>, role: String) -> Arc<RwLock<CgVariable>> {
         let cod_shape: (usize, usize) = (*(*parent).read().unwrap()).get_codomain_shape();
 
         let variable_obj = CgVariable {
@@ -93,4 +92,3 @@ impl CgVariable {
     pub fn show_data(&self) { println!("{:?}", self.data); }
     pub fn show_grad(&self) { println!("{:?}", self.grad); }
 }
-// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++ //
