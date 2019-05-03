@@ -1,10 +1,9 @@
 extern crate ndarray;
 extern crate ndarray_linalg;
 
-use std::sync::{Arc, RwLock, Weak};
+use std::sync::{Arc, RwLock};
 
 use graph::node_function::CgFunction;
-use graph::node_functions::*;
 
 use self::ndarray::*;
 use self::ndarray_linalg::*;
@@ -28,7 +27,7 @@ impl CgVariable {
 
         let mut variable_obj = CgVariable {
             role: "mono".to_string(),
-            shape: shape,
+            shape,
             data: Array2::<f32>::ones(shape),
             grad: Array2::<f32>::zeros(shape),
             par_f_opt: None,
@@ -44,7 +43,7 @@ impl CgVariable {
         let cod_shape: (usize, usize) = (*(*parent).read().unwrap()).get_codomain_shape();
 
         let variable_obj = CgVariable {
-            role: role,
+            role,
             shape: cod_shape,
             data: Array2::<f32>::ones(cod_shape),
             grad: Array2::<f32>::zeros(cod_shape),
@@ -57,7 +56,11 @@ impl CgVariable {
         variable_ref
     }
 
-    pub fn forward(&mut self) -> &(Array2<f32>) {
+    pub fn get_ref(&self) -> &(Array2<f32>) {
+        &(self.data)
+    }
+
+    pub fn forward(&mut self) {
         match self.par_f_opt {
             Some(ref par_f) => {
                 if !self.did {
@@ -67,28 +70,49 @@ impl CgVariable {
             }
             None => (),
         };
-        &(self.data)
     }
 
-    // pub fn backward(&self) {}
+    pub fn backward(&self, grad: Array2<f32>) {
+        assert_eq!(self.shape, slice2pair(grad.shape()));
 
-    pub fn see_child(&self) -> &(Array2<f32>) { &(self.data) }
+        match self.par_f_opt {
+            Some(ref par_f) => {
+                if self.did {
+                    let guard = (**par_f).read().unwrap();
+                    (*guard).backward(grad);
+                }
+            }
+            None => (),
+        };
+    }
+
+    pub fn accumulate_grad(&mut self, grad: &Array2<f32>) {
+        assert_eq!(self.shape, slice2pair(grad.shape()));
+
+        self.grad += grad;
+    }
 
     pub fn set_data(&mut self, data: Array2<f32>) {
         let shape: (usize, usize) = slice2pair(data.shape());
+
         assert_eq!(self.shape, shape);
+
         self.data = data;
     }
 
-    pub fn set_grad(&mut self, grad: Array2<f32>) {
-        assert_eq!(self.shape, slice2pair(grad.shape()));
-        self.grad = grad;
+    pub fn get_shape(&self) -> (usize, usize) {
+        self.shape
     }
 
-    pub fn get_shape(&self) -> (usize, usize) { self.shape }
+    pub fn reset_did(&mut self) {
+        self.did = false;
+    }
 
-    pub fn reset_did(&mut self) { self.did = false; }
+    pub fn show_data(&self) {
+        println!("{:?}", self.data);
+    }
 
-    pub fn show_data(&self) { println!("{:?}", self.data); }
-    pub fn show_grad(&self) { println!("{:?}", self.grad); }
+    pub fn show_grad(&self) {
+        println!("{:?}", self.grad);
+    }
 }

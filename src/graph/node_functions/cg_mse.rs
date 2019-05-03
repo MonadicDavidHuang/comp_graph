@@ -4,10 +4,9 @@ extern crate ndarray_linalg;
 use std::sync::{Arc, RwLock, Weak};
 
 use graph::node_function::CgFunction;
-use graph::node_variable::*;
+use graph::node_variable::CgVariable;
 
 use self::ndarray::*;
-use self::ndarray_linalg::*;
 
 pub struct CgMse {
     domain_shape: (usize, usize),
@@ -39,21 +38,38 @@ impl CgMse {
         };
 
         let reference = Arc::new(RwLock::new(data));
+
         reference
     }
 }
 
 impl CgFunction for CgMse {
     fn forward(&self) -> Array2<f32> {
-        let mut left_guard = (*self.left_parent_reference).write().unwrap();
-        let mut right_guard = (*self.right_parent_reference).write().unwrap();
-        let left_domain_ref = (*left_guard).forward();
-        let right_domain_ref = (*right_guard).forward();
-        let codomain_data = left_domain_ref + right_domain_ref;
+        {
+            let mut guard_left = (*self.left_parent_reference).write().unwrap();
+            (*guard_left).forward();
+        }
+
+        {
+            let mut guard_right = (*self.right_parent_reference).write().unwrap();
+            (*guard_right).forward();
+        }
+
+        let codomain_data = {
+            let mut guard_left = (*self.left_parent_reference).read().unwrap();
+            let mut guard_right = (*self.right_parent_reference).read().unwrap();
+
+            let left_domain_reference = (*guard_left).get_ref();
+            let right_domain_reference = (*guard_right).get_ref();
+
+            let return_data = left_domain_reference + right_domain_reference;
+            return_data
+        };
+
         codomain_data
     }
 
-    // fn backward(&self) {}
+    fn backward(&self, grad: Array2<f32>) {}
 
     fn set_child(&mut self, child_variable_reference: Arc<RwLock<CgVariable>>) {
         let child_variable_reference_weak =
