@@ -9,7 +9,7 @@ mod basic_tests {
     use ndarray::*;
     use ndarray_linalg::*;
 
-    use computation_graph::graph::node_functions::cg_plus::CgPlus;
+    use computation_graph::graph::node_functions::plus::CgPlus;
     use computation_graph::graph::node_variable::CgVariable;
 
     fn make_plus(shape: (usize, usize)) -> (Arc<RwLock<CgVariable>>, Arc<RwLock<CgVariable>>) {
