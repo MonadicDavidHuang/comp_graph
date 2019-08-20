@@ -1,2 +1,2 @@
-# computation_graph
-Computation graph with "back-prop through graph" implementation.
+# computation-graph
+Simple computation graph with **back-prop through graph** implementation.
