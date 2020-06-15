@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod basic_tests {
-    use std::sync::{Arc, RwLock};
+    use std::cell::RefCell;
+    use std::rc::{Rc, Weak};
 
     use ndarray::*;
     use ndarray_linalg::*;
@@ -8,7 +9,7 @@ mod basic_tests {
     use computation_graph::graph::node_functions::plus::CgPlus;
     use computation_graph::graph::node_variable::CgVariable;
 
-    fn make_plus(shape: (usize, usize)) -> (Arc<RwLock<CgVariable>>, Arc<RwLock<CgVariable>>) {
+    fn make_plus(shape: (usize, usize)) -> (Rc<RefCell<CgVariable>>, Rc<RefCell<CgVariable>>) {
         let array1 = Array2::<f32>::ones(shape);
         let variable1 = CgVariable::from_array(array1);
 
@@ -33,24 +34,24 @@ mod basic_tests {
         let var = tup.0;
 
         {
-            let mut guard = (*var).write().unwrap();
+            let mut guard = (*var).borrow_mut();
             guard.forward();
         }
 
         let result = {
-            let guard = (*var).read().unwrap();
+            let guard = (*var).borrow();
             let return_result = (*guard).get_ref().to_owned();
             return_result
         };
 
         {
-            let guard = (*var).read().unwrap();
-            guard.backward(Array2::<f32>::ones(shape));
+            let guard = (*var).borrow();
+            guard.backward(&Array2::<f32>::ones(shape));
         }
 
         {
             let hoge = tup.1;
-            let guard = (*hoge).read().unwrap();
+            let guard = (*hoge).borrow();
             (*guard).show_grad();
         }
 

@@ -1,4 +1,5 @@
-use std::sync::{Arc, RwLock};
+use std::cell::RefCell;
+use std::rc::Rc;
 
 use super::node_function::CgFunction;
 
@@ -14,12 +15,12 @@ pub struct CgVariable {
     shape: (usize, usize),
     data: Array2<f32>,
     grad: Array2<f32>,
-    par_f_opt: Option<Arc<RwLock<CgFunction>>>,
+    par_f_opt: Option<Rc<RefCell<CgFunction>>>,
     did: bool,
 }
 
 impl CgVariable {
-    pub fn from_array(data: Array2<f32>) -> Arc<RwLock<CgVariable>> {
+    pub fn from_array(data: Array2<f32>) -> Rc<RefCell<CgVariable>> {
         let shape: (usize, usize) = slice2pair(data.shape());
 
         let mut variable_obj = CgVariable {
@@ -32,12 +33,12 @@ impl CgVariable {
         };
 
         variable_obj.set_data(data);
-        let variable_ref = Arc::new(RwLock::new(variable_obj));
+        let variable_ref = Rc::new(RefCell::new(variable_obj));
         variable_ref
     }
 
-    pub fn from_ref(parent: Arc<RwLock<CgFunction>>, role: String) -> Arc<RwLock<CgVariable>> {
-        let cod_shape: (usize, usize) = (*(*parent).read().unwrap()).get_codomain_shape();
+    pub fn from_ref(parent: Rc<RefCell<CgFunction>>, role: String) -> Rc<RefCell<CgVariable>> {
+        let cod_shape: (usize, usize) = (*(*parent).borrow()).get_codomain_shape();
 
         let variable_obj = CgVariable {
             role,
@@ -48,8 +49,8 @@ impl CgVariable {
             did: false,
         };
 
-        let variable_ref = Arc::new(RwLock::new(variable_obj));
-        (*(*parent).write().unwrap()).set_child(variable_ref.clone());
+        let variable_ref = Rc::new(RefCell::new(variable_obj));
+        (*(*parent).borrow_mut()).set_child(variable_ref.clone());
         variable_ref
     }
 
@@ -61,7 +62,7 @@ impl CgVariable {
         match self.par_f_opt {
             Some(ref par_f) => {
                 if !self.did {
-                    self.data = (*(**par_f).read().unwrap()).forward();
+                    self.data = (*(**par_f).borrow()).forward();
                     self.did = true;
                 }
             }
@@ -69,13 +70,13 @@ impl CgVariable {
         };
     }
 
-    pub fn backward(&self, grad: Array2<f32>) {
+    pub fn backward(&self, grad: &Array2<f32>) {
         assert_eq!(self.shape, slice2pair(grad.shape()));
 
         match self.par_f_opt {
             Some(ref par_f) => {
                 if self.did {
-                    let guard = (**par_f).read().unwrap();
+                    let guard = (**par_f).borrow();
                     (*guard).backward(grad);
                 }
             }
