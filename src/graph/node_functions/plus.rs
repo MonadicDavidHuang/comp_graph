@@ -1,12 +1,9 @@
-extern crate ndarray;
-extern crate ndarray_linalg;
-
 use std::sync::{Arc, RwLock, Weak};
 
-use graph::node_function::CgFunction;
-use graph::node_variable::CgVariable;
+use super::super::node_function::CgFunction;
+use super::super::node_variable::CgVariable;
 
-use self::ndarray::*;
+use ndarray::*;
 
 pub struct CgPlus {
     domain_shape: (usize, usize),

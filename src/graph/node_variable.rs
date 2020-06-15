@@ -1,12 +1,9 @@
-extern crate ndarray;
-extern crate ndarray_linalg;
-
 use std::sync::{Arc, RwLock};
 
-use graph::node_function::CgFunction;
+use super::node_function::CgFunction;
 
-use self::ndarray::*;
-use self::ndarray_linalg::*;
+use ndarray::*;
+use ndarray_linalg::*;
 
 pub fn slice2pair(slice: &[usize]) -> (usize, usize) {
     (slice[0], slice[1])

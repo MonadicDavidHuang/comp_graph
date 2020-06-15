@@ -1,12 +1,9 @@
-extern crate ndarray;
-extern crate ndarray_linalg;
-
 use std::sync::{Arc, RwLock, Weak};
 
-use graph::node_function::CgFunction;
-use graph::node_variable::CgVariable;
+use super::super::node_function::CgFunction;
+use super::super::node_variable::CgVariable;
 
-use self::ndarray::*;
+use ndarray::*;
 
 pub struct CgMse {
     domain_shape: (usize, usize),
@@ -17,9 +14,10 @@ pub struct CgMse {
 }
 
 impl CgMse {
-    pub fn from_ref(left_parent_reference: Arc<RwLock<CgVariable>>,
-                    right_parent_reference: Arc<RwLock<CgVariable>>)
-                    -> Arc<RwLock<CgMse>> {
+    pub fn from_ref(
+        left_parent_reference: Arc<RwLock<CgVariable>>,
+        right_parent_reference: Arc<RwLock<CgVariable>>,
+    ) -> Arc<RwLock<CgMse>> {
         let shape_left = (*(*left_parent_reference).read().unwrap()).get_shape();
         let shape_right = (*(*right_parent_reference).read().unwrap()).get_shape();
 
@@ -72,8 +70,7 @@ impl CgFunction for CgMse {
     fn backward(&self, grad: Array2<f32>) {}
 
     fn set_child(&mut self, child_variable_reference: Arc<RwLock<CgVariable>>) {
-        let child_variable_reference_weak =
-            Arc::downgrade(&child_variable_reference);
+        let child_variable_reference_weak = Arc::downgrade(&child_variable_reference);
         self.child_variable_reference_weak_optional = Some(child_variable_reference_weak);
     }
 
@@ -85,4 +82,3 @@ impl CgFunction for CgMse {
         self.codomain_shape
     }
 }
-

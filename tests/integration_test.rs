@@ -1,7 +1,3 @@
-extern crate computation_graph;
-extern crate ndarray;
-extern crate ndarray_linalg;
-
 #[cfg(test)]
 mod basic_tests {
     use std::sync::{Arc, RwLock};
@@ -58,7 +54,8 @@ mod basic_tests {
             (*guard).show_grad();
         }
 
-        let array_twos = Array2::<f32>::ones(shape) + Array2::<f32>::ones(shape) + Array2::<f32>::ones(shape);
+        let array_twos =
+            Array2::<f32>::ones(shape) + Array2::<f32>::ones(shape) + Array2::<f32>::ones(shape);
 
         assert_eq!(array_twos, result);
     }

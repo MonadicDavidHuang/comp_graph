@@ -1,10 +1,8 @@
-extern crate ndarray;
-
 use std::sync::{Arc, RwLock};
 
-use graph::node_variable::CgVariable;
+use super::node_variable::CgVariable;
 
-use self::ndarray::*;
+use ndarray::*;
 
 pub trait CgFunction {
     fn forward(&self) -> Array2<f32>;
