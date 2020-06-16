@@ -35,7 +35,7 @@ pub struct CgVariable {
 impl std::fmt::Debug for CgVariable {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("CgVariable")
-            .field("address", &self)
+            .field("address", &format!("{:p}", self))
             .field("role", &self.role)
             .field("shape", &self.shape)
             .field("did", &self.did)
@@ -47,7 +47,7 @@ impl CgVariable {
     pub fn from_array_to_reference(data: Array2<f32>) -> Rc<RefCell<Self>> {
         let shape: (usize, usize) = slice2pair(data.shape());
 
-        let mut variable = CgVariable {
+        let variable = CgVariable {
             role: VariableRole::FromArray,
             shape,
             data,
@@ -75,7 +75,7 @@ impl CgVariable {
 
         let reference = Rc::new(RefCell::new(variable));
 
-        let variable_wrapper = CgVariableWrapper::from_reference(reference.clone());
+        let variable_wrapper = CgVariableWrapper(reference.clone());
 
         (*function_wrapper).borrow_mut().set_child(variable_wrapper);
 
@@ -128,22 +128,24 @@ impl CgVariable {
 
     // Get variable "get_variable_ancestors", which means does not include self.
     pub fn get_variable_ancestors(&self) -> HashSet<CgVariableWrapper> {
-        let mut ret = HashSet::new();
-
         match self.role {
             VariableRole::FromArray => {
-                ret // empty set
-            },
+                HashSet::new() // empty set
+            }
             VariableRole::FromFunction => {
                 match self.par_f_opt {
                     Some(ref par_f) => {
+                        let mut ret = HashSet::new();
+
                         let variable_ancestors = par_f.borrow().get_variable_ancestors();
-                        ret.union(&variable_ancestors);
+
+                        ret.extend(variable_ancestors);
+
                         ret
                     },
                     None => panic!("CgVariable with VariableRole::FromFunction must NOT have Optional::None parent function."),
                 }
-            },
+            }
         }
     }
 
@@ -165,11 +167,11 @@ impl CgVariable {
 }
 
 #[derive(Clone)]
-pub struct CgVariableWrapper(Rc<RefCell<CgVariable>>);
+pub struct CgVariableWrapper(pub Rc<RefCell<CgVariable>>);
 
 impl PartialEq for CgVariableWrapper {
     fn eq(&self, other: &Self) -> bool {
-        ptr::eq(self, other)
+        ptr::eq(&*(*self).borrow(), &*(*other).borrow())
     }
 }
 
@@ -177,7 +179,7 @@ impl Eq for CgVariableWrapper {}
 
 impl Hash for CgVariableWrapper {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        ptr::hash(self, state)
+        ptr::hash(&*(*self).borrow(), state)
     }
 }
 
@@ -190,25 +192,23 @@ impl Deref for CgVariableWrapper {
 }
 
 impl CgVariableWrapper {
-    pub fn from_reference(reference: Rc<RefCell<CgVariable>>) -> Self {
-        CgVariableWrapper { 0: reference }
+    pub fn from_array(data: Array2<f32>) -> Self {
+        let reference = CgVariable::from_array_to_reference(data);
+        CgVariableWrapper(reference)
     }
 
     pub fn from_function_wrapper(function_wrapper: CgFunctionWrapper) -> Self {
-        CgVariableWrapper::from_reference(CgVariable::from_function_wrapper_to_reference(
-            function_wrapper,
-        ))
+        let reference = CgVariable::from_function_wrapper_to_reference(function_wrapper);
+        CgVariableWrapper(reference)
     }
 
-    pub fn downgrade(&self) -> CgVariableWeakWrapper {
-        CgVariableWeakWrapper {
-            0: Rc::downgrade(&self.0),
-        }
+    pub fn downgrade(self) -> CgVariableWeakWrapper {
+        CgVariableWeakWrapper(Rc::downgrade(&self.0))
     }
 }
 
 #[derive(Clone)]
-pub struct CgVariableWeakWrapper(Weak<RefCell<CgVariable>>);
+pub struct CgVariableWeakWrapper(pub Weak<RefCell<CgVariable>>);
 
 impl Deref for CgVariableWeakWrapper {
     type Target = Weak<RefCell<CgVariable>>;

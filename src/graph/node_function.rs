@@ -30,8 +30,8 @@ pub trait CgFunction {
         let left_variable_ancestors = (*left_parent).borrow().get_variable_ancestors();
         let right_variable_ancestors = (*left_parent).borrow().get_variable_ancestors();
 
-        ret.union(&left_variable_ancestors);
-        ret.union(&right_variable_ancestors);
+        ret.extend(left_variable_ancestors);
+        ret.extend(right_variable_ancestors);
 
         ret.insert(left_parent);
         ret.insert(right_parent);
@@ -44,32 +44,12 @@ pub trait CgFunction {
 }
 
 #[derive(Clone)]
-pub struct CgFunctionWrapper(Rc<RefCell<dyn CgFunction>>);
-
-impl PartialEq for CgFunctionWrapper {
-    fn eq(&self, other: &Self) -> bool {
-        ptr::eq(self, other)
-    }
-}
-
-impl Eq for CgFunctionWrapper {}
-
-impl Hash for CgFunctionWrapper {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        ptr::hash(self, state)
-    }
-}
+pub struct CgFunctionWrapper(pub Rc<RefCell<dyn CgFunction>>);
 
 impl Deref for CgFunctionWrapper {
     type Target = Rc<RefCell<dyn CgFunction>>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
-    }
-}
-
-impl CgFunctionWrapper {
-    fn from_reference(reference: Rc<RefCell<dyn CgFunction>>) -> Self {
-        CgFunctionWrapper { 0: reference }
     }
 }

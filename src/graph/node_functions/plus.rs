@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use super::super::node_function::CgFunction;
+use super::super::node_function::{CgFunction, CgFunctionWrapper};
 use super::super::node_variable::{CgVariableWeakWrapper, CgVariableWrapper};
 
 use ndarray::*;
@@ -15,7 +15,7 @@ pub struct CgPlus {
 }
 
 impl CgPlus {
-    pub fn from_wrapper(
+    pub fn from_wrapper_to_reference(
         left_parent_wrapper: CgVariableWrapper,
         right_parent_wrapper: CgVariableWrapper,
     ) -> Rc<RefCell<Self>> {
@@ -38,6 +38,17 @@ impl CgPlus {
 
         let reference = Rc::new(RefCell::new(data));
         reference
+    }
+
+    pub fn from_wrapper_to_wrapper(
+        left_parent_wrapper: CgVariableWrapper,
+        right_parent_wrapper: CgVariableWrapper,
+    ) -> CgVariableWrapper {
+        let reference = Self::from_wrapper_to_reference(left_parent_wrapper, right_parent_wrapper);
+        let wrapper = CgFunctionWrapper(reference);
+        let wrapper = CgVariableWrapper::from_function_wrapper(wrapper);
+
+        wrapper
     }
 }
 
