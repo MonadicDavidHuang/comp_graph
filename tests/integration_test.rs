@@ -1,12 +1,9 @@
 #[cfg(test)]
 mod basic_tests {
-    use std::cell::RefCell;
-    use std::rc::Rc;
-
     use ndarray::*;
     use ndarray_linalg::*;
 
-    use computation_graph::graph::node_function::{CgFunction, CgFunctionWrapper};
+    use computation_graph::graph::node_function::CgFunction;
     use computation_graph::graph::node_functions::plus::CgPlus;
     use computation_graph::graph::node_variable::CgVariableWrapper;
 
@@ -26,7 +23,7 @@ mod basic_tests {
         (variable5, variable2)
     }
 
-    //#[test]
+    #[test]
     fn test_forward() {
         let shape = (5 as usize, 2 as usize);
 
@@ -56,8 +53,7 @@ mod basic_tests {
             (*guard).show_grad();
         }
 
-        let array_twos =
-            Array2::<f32>::ones(shape) + Array2::<f32>::ones(shape) + Array2::<f32>::ones(shape);
+        let array_twos = Array2::<f32>::ones(shape).map(|x| x * 5.0);
 
         assert_eq!(array_twos, result);
     }

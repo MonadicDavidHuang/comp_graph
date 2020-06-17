@@ -11,7 +11,6 @@ use std::hash::{Hash, Hasher};
 use super::node_function::CgFunctionWrapper;
 
 use ndarray::*;
-use ndarray_linalg::*;
 
 pub fn slice2pair(slice: &[usize]) -> (usize, usize) {
     (slice[0], slice[1])

@@ -1,9 +1,6 @@
-use std::ptr;
-
 use std::ops::Deref;
 
 use std::collections::HashSet;
-use std::hash::{Hash, Hasher};
 
 use std::cell::RefCell;
 use std::rc::Rc;
