@@ -79,7 +79,7 @@ impl CgFunction for CgMse {
         codomain_data
     }
 
-    fn backward(&self, grad: &Array2<f32>) {}
+    fn backward(&self, _grad: &Array2<f32>) {}
 
     fn set_child(&mut self, child_variable_wrapper: CgVariableWrapper) {
         let child_variable_reference_weak = child_variable_wrapper.downgrade();

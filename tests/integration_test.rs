@@ -1,7 +1,6 @@
 #[cfg(test)]
 mod basic_tests {
     use ndarray::*;
-    use ndarray_linalg::*;
 
     use computation_graph::graph::node_function::CgFunction;
     use computation_graph::graph::node_functions::plus::CgPlus;
