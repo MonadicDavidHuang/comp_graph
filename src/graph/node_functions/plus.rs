@@ -39,8 +39,10 @@ impl CgPlus {
         let reference = Rc::new(RefCell::new(data));
         reference
     }
+}
 
-    pub fn from_wrapper_to_wrapper(
+impl CgFunction for CgPlus {
+    fn apply(
         left_parent_wrapper: CgVariableWrapper,
         right_parent_wrapper: CgVariableWrapper,
     ) -> CgVariableWrapper {
@@ -50,9 +52,7 @@ impl CgPlus {
 
         wrapper
     }
-}
 
-impl CgFunction for CgPlus {
     fn forward(&self) -> Array2<f32> {
         {
             let mut guard_left = (*self.left_parent_wrapper).borrow_mut();

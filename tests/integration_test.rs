@@ -6,7 +6,7 @@ mod basic_tests {
     use ndarray::*;
     use ndarray_linalg::*;
 
-    use computation_graph::graph::node_function::CgFunctionWrapper;
+    use computation_graph::graph::node_function::{CgFunction, CgFunctionWrapper};
     use computation_graph::graph::node_functions::plus::CgPlus;
     use computation_graph::graph::node_variable::CgVariableWrapper;
 
@@ -17,11 +17,11 @@ mod basic_tests {
         let array2 = Array2::<f32>::ones(shape);
         let variable2 = CgVariableWrapper::from_array(array2);
 
-        let variable3 = CgPlus::from_wrapper_to_wrapper(variable1.clone(), variable2.clone());
+        let variable3 = CgPlus::apply(variable1.clone(), variable2.clone());
 
-        let variable4 = CgPlus::from_wrapper_to_wrapper(variable3.clone(), variable1.clone());
+        let variable4 = CgPlus::apply(variable3.clone(), variable1.clone());
 
-        let variable5 = CgPlus::from_wrapper_to_wrapper(variable3, variable4);
+        let variable5 = CgPlus::apply(variable3, variable4);
 
         (variable5, variable2)
     }

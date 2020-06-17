@@ -44,7 +44,7 @@ impl std::fmt::Debug for CgVariable {
 }
 
 impl CgVariable {
-    pub fn from_array_to_reference(data: Array2<f32>) -> Rc<RefCell<Self>> {
+    pub fn from_data_to_reference(data: Array2<f32>) -> Rc<RefCell<Self>> {
         let shape: (usize, usize) = slice2pair(data.shape());
 
         let variable = CgVariable {
@@ -193,7 +193,7 @@ impl Deref for CgVariableWrapper {
 
 impl CgVariableWrapper {
     pub fn from_array(data: Array2<f32>) -> Self {
-        let reference = CgVariable::from_array_to_reference(data);
+        let reference = CgVariable::from_data_to_reference(data);
         CgVariableWrapper(reference)
     }
 

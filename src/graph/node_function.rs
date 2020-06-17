@@ -13,6 +13,11 @@ use super::node_variable::CgVariableWrapper;
 use ndarray::*;
 
 pub trait CgFunction {
+    fn apply(
+        left_parent_wrapper: CgVariableWrapper,
+        right_parent_wrapper: CgVariableWrapper,
+    ) -> CgVariableWrapper where Self: Sized;
+
     fn forward(&self) -> Array2<f32>;
     fn backward(&self, grad: &Array2<f32>);
     fn set_child(&mut self, chi_v: CgVariableWrapper);

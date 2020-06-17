@@ -40,8 +40,10 @@ impl CgMse {
 
         reference
     }
+}
 
-    pub fn from_wrapper_to_wrapper(
+impl CgFunction for CgMse {
+    fn apply(
         left_parent_wrapper: CgVariableWrapper,
         right_parent_wrapper: CgVariableWrapper,
     ) -> CgVariableWrapper {
@@ -51,9 +53,7 @@ impl CgMse {
 
         wrapper
     }
-}
 
-impl CgFunction for CgMse {
     fn forward(&self) -> Array2<f32> {
         {
             let mut guard_left = (*self.left_parent_wrapper).borrow_mut();
